@@ -1,4 +1,5 @@
 from cloudinary.api_client.call_api import call_json_api, call_api
+from cloudinary.utils import chunks
 
 
 def ping(**options):
@@ -8,7 +9,12 @@ def ping(**options):
 
 def invalidate(*urls, **options):
     options["is_mo"] = True
-    return call_json_api("post", ["invalidate"], {"urls": list(urls)}, **options)
+    results = []
+    for chunk in chunks(urls, 20):
+        results.append(
+            call_json_api("post", ["cache_invalidate"], {"urls": chunk}, **options)
+        )
+    return results
 
 
 def warm_up(url, **options):

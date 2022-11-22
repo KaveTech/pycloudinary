@@ -38,9 +38,15 @@ class MoApiTest(unittest.TestCase):
         uri = get_uri(args)
         *rest, cloud_name, method = uri.rsplit("/", 2)
         self.assertEqual(cloud_name, cloudinary.config().cloud_name)
-        self.assertEqual(method, "invalidate")
+        self.assertEqual(method, "cache_invalidate")
         self.assertEqual(get_method(mocker), "POST")
         self.assertEqual(get_json_body(mocker)["urls"], [TEST_IMAGE])
+
+    @patch('urllib3.request.RequestMethods.request')
+    def test_invalidate_allows_more_than_20_urls(self, mocker):
+        mocker.return_value = MOCK_RESPONSE
+        mo_api.invalidate(*([TEST_IMAGE] * 21))
+        assert mocker.call_count == 2, "Should be splitted into two calls"
 
     @patch('urllib3.request.RequestMethods.request')
     def test_warm_up(self, mocker):
@@ -53,6 +59,7 @@ class MoApiTest(unittest.TestCase):
         self.assertEqual(method, "cache_warm_up")
         self.assertEqual(get_method(mocker), "POST")
         self.assertEqual(get_json_body(mocker)["url"], TEST_IMAGE)
+
 
 if __name__ == '__main__':
     unittest.main()

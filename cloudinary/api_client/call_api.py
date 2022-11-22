@@ -33,7 +33,7 @@ def call_api(method, uri, params, **options):
 
 def _build_api_url(prefix, cloud_name, uri, **options):
     """
-    The Cloudinary SDK is tighted to the DAM API, which has its own route paths.
+    The Cloudinary SDK is tightened to the DAM API, which has its own route paths.
     To allow interacting with the Media Optimizer API too, we have to build a (not so much)
     different URL.
     The only difference is that the DAM API includes the API version in the path, which usually is
@@ -43,7 +43,7 @@ def _build_api_url(prefix, cloud_name, uri, **options):
     Optimizer API.
     """
     components = [prefix, cloud_name] + uri
-    if not options.get("is_mo"):
+    if not options.pop("is_mo", None):
         components.insert(1, cloudinary.API_VERSION)
     return "/".join(components)
 

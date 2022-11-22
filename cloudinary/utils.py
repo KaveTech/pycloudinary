@@ -10,6 +10,8 @@ import string
 import struct
 import time
 import urllib
+from typing import Collection
+
 import zlib
 from collections import OrderedDict
 from datetime import datetime, date
@@ -1578,3 +1580,9 @@ def unique(collection, key=None):
         to_return[key(element)] = element
 
     return list(to_return.values())
+
+
+def chunks(lst: Collection, n: int):
+    """Yield successive n-sized chunks from lst."""
+    for i in range(0, len(lst), n):
+        yield lst[i:i + n]
